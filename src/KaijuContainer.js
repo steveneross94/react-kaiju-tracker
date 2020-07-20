@@ -11,10 +11,26 @@ import * as requests from './requests'
 class KaijuContainer extends React.Component {
 
   state = {
-    kaijus: []
+    kaijus: [],
+    sightings: []
   }
 
+componentDidMount(){
+  requests.fetchKaijus()
+  .then(data => this.setState({ kaijus: data }))
+  requests.fetchSightings()
+  .then(data => this.setState({ sightings: data }))
+}
+
+editKaiju = (kaijuObj) => {
+  let kaijus = [...this.state.kaijus]
+  const kaijuIdx = kaijus.findIndex((kaiju => kaiju.id === kaijuObj.id))
+  kaijus[kaijuIdx] = kaijuObj
+  this.setState({ kaijus })
+}
+
   render() {
+    console.log(this.state);
     return (
       <>
 
@@ -22,7 +38,18 @@ class KaijuContainer extends React.Component {
 
         <div id='kaiju-container'>
 
-          {/* Kaiju cards should go in here! */}
+          {this.state.kaijus.map(kaiju => {
+            return (
+              <KaijuCard 
+              key={kaiju.id} 
+              id={kaiju.id}
+              name={kaiju.name}
+              power={kaiju.power}
+              image={kaiju.image}
+              editKaiju={this.editKaiju}
+              />  
+            )}
+          )}
 
         </div>
 
@@ -38,3 +65,4 @@ class KaijuContainer extends React.Component {
 }
 
 export default KaijuContainer
+
